@@ -1,16 +1,21 @@
 ﻿using MarsOnboardV2.Drivers;
 using OpenQA.Selenium.Chrome;
 using MarsOnboardV2.Pages;
+using NUnit.Framework;
+using System.Xml.Linq;
+
 
 namespace MarsOnboardV2.Hooks
 {
+
     [Binding]
     public sealed class Hooks1 : CommonDriver
     {
+        Language langHookObj = new Language();
 
-   //     [BeforeScenario("@tag1")]
-     //   public void BeforeScenarioWithTag()
-       // {
+        //     [BeforeScenario("@tag1")]
+        //   public void BeforeScenarioWithTag()
+        // {
 
         //}
 
@@ -26,7 +31,9 @@ namespace MarsOnboardV2.Hooks
         [AfterScenario]
         public void AfterScenario()
         {
-            driver.Quit();
+           
+             driver.Quit();
         }
+       
     }
 }

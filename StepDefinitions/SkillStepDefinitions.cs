@@ -12,12 +12,8 @@ namespace MarsOnboardV2.StepDefinitions
     [Binding]
     public class SkillStepDefinitions : CommonDriver
     {
-        AddSkillPage skillPageObj = new AddSkillPage();
-        ContentReadSkill readLanguageObj = new ContentReadSkill();
-        LocateAndClickAddNewSkill addButtonObj = new LocateAndClickAddNewSkill();
-        DeleteSkillPage deletePageObj = new DeleteSkillPage();
-        EditSkillPage editSkillPageObj = new EditSkillPage();
-
+        Skills skillsObj = new Skills();
+        
         [Given(@"Skill Tab is selected in Profile Page")]
         public void GivenSkillTabIsSelectedInProfilePage()
         {
@@ -30,7 +26,7 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I click on cross icon buttons")]
         public void WhenIClickOnCrossIconButtons()
         {
-            deletePageObj.DeleteSkill();
+            skillsObj.DeleteSkill();
         }
 
         [Then(@"Existing skill delete successfully")]
@@ -50,13 +46,13 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I click on add New buttons")]
         public void WhenIClickOnAddNewButtons()
         {
-            skillPageObj.AddSkill();
+            skillsObj.AddSkill();
         }
 
         [When(@"I give input '([^']*)','([^']*)' of skill")]
         public void WhenIGiveInputOfSkill(string skill, string level)
         {
-            skillPageObj.InputSkill(skill, level);
+            skillsObj.InputSkill(skill, level);
         }
 
         [Then(@"'([^']*)' should be added in")]
@@ -70,13 +66,13 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I click on add New buttons to give invalid input")]
         public void WhenIClickOnAddNewButtonsToGiveInvalidInput()
         {
-            addButtonObj.LocateClickAddNew();
+            skillsObj.LocateClickAddNew();
         }
 
         [When(@"I give space as input <'([^']*)'>,<'([^']*)'> for skill")]
         public void WhenIGiveSpaceAsInputForSkill(string skill, string level)
         {
-            skillPageObj.SpaceInput(skill = " ", level = "Expert");
+            skillsObj.SpaceInput(skill = " ", level = "Expert");
         
     }
 
@@ -98,7 +94,7 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I give input <'([^']*)'> to skill but not choosen level of skill")]
         public void WhenIGiveInputToSkillButNotChoosenLevelOfSkill(string skill)
         {
-            skillPageObj.NotChoosingLevel(skill = "qwer");
+            skillsObj.NotChoosingLevel(skill = "qwer");
         }
 
         [Then(@"<'([^']*)'> should not be added in")]
@@ -114,7 +110,7 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I give existing input '([^']*)','([^']*)'  of skill")]
         public void WhenIGiveExistingInputOfSkill(string skill, string level)
         {
-            skillPageObj.DuplicateInput(skill, level);
+            skillsObj.DuplicateInput(skill, level);
         }
 
     
@@ -148,13 +144,13 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I click on pencil icon buttons")]
         public void WhenIClickOnPencilIconButtons()
         {
-            editSkillPageObj.EditSkill();
+            skillsObj.EditSkill();
         }
 
         [When(@"I update skill and level of skill")]
         public void WhenIUpdateSkillAndLevelOfSkill()
         {
-            editSkillPageObj.InputEditSkill(driver);
+            skillsObj.InputEditSkill(driver);
         }
 
         [Then(@"skill and level should be updated")]

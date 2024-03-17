@@ -10,5 +10,7 @@ namespace MarsOnboardV2.Drivers
     public class CommonDriver
     {
         public static IWebDriver driver;
+      //  public static IWebElement? element;
+
     }
 }

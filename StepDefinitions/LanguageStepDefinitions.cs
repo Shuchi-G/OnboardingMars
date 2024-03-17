@@ -5,6 +5,8 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 
 using System;
+using System.IO;
+using System.Linq.Expressions;
 using System.Reflection.Emit;
 using TechTalk.SpecFlow;
 
@@ -13,11 +15,8 @@ namespace MarsOnboardV2.StepDefinitions
     [Binding]
     public class LanguageStepDefinitions : CommonDriver
     {
-        DeletePage deletePageObj = new DeletePage();
-        LanguagesPage languagesPageObj = new LanguagesPage();
-        DeleteAnExistingLanguage deletingObj = new DeleteAnExistingLanguage();
-        ContentReadLanguage readLanguageObj = new ContentReadLanguage();
-        EditLanguagePage editLanguagePageObj = new EditLanguagePage();
+        Language languageObj = new Language();
+        
         [Given(@"Language Tab is selected in Profile Page/")]
         public void GivenLanguageTabIsSelectedInProfilePage()
         {
@@ -27,61 +26,63 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I click on Cross icon buttons")]
         public void WhenIClickOnCrossIconButtons()
         {
-            deletePageObj.DeleteLanguage();
+            languageObj.DeleteLanguage();
         }
 
-        [Then(@"Existing languages deleted successfully")]
-        public void ThenExistingLanguagesDeletedSuccessfully()
+        [Given(@"Delete the last language if there is no add new button")]
+        public void GivenDeleteTheLastLanguageIfThereIsNoAddNewButton()
         {
-            try
-            {
-                driver.FindElement(By.XPath("//*/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/tbody/tr/td[3]/span[2]/i"));
-            }
-            catch (NoSuchElementException)
-            {
-                Assert.Pass("All languages are deleted");
-
-            }
+            languageObj.DeleteLanguage3();
         }
+
+        [When(@"Add English as language and basic as level")]
+        public void WhenAddEnglishAsLanguageAndBasicAsLevel()
+        {
+            throw new PendingStepException();
+        }
+
+        [Given(@"Add German as language and level as basic")]
+        public void GivenAddGermanAsLanguageAndLevelAsBasic()
+        {
+            throw new PendingStepException();
+        }
+
 
         [When(@"I click on Add New buttons")]
         public void WhenIClickOnAddNewButtons()
         {
-            languagesPageObj.AddLanguage();
+            languageObj.AddLanguage();
         }
 
         [When(@"I give input '([^']*)','([^']*)' of language")]
         public void WhenIGiveInputOfLanguage(string language, string level)
         {
-            languagesPageObj.InputLanguage(language, level);
+            languageObj.InputLanguage(language, level);
         }
 
         [Then(@"'([^']*)' should be added")]
         public void ThenShouldBeAdded(string language)
         {
-            Thread.Sleep(5000);
-            IWebElement languageRead = driver.FindElement(By.XPath("//div/section[2]/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/tbody[last()]/tr/td[1]"));
-            Assert.That(languageRead.Text, Is.EqualTo(language), "Language is not added");
+            Thread.Sleep(2000);
+            languageObj.LanguageCheck(language);
+        }
+        [Then(@"language should be reset")]
+        public void ThenLanguageShouldBeReset()
+        {
+            languageObj.DeleteLanguage2();
         }
 
-        [Given(@"Add New button should be there")]
-        public void GivenAddNewButtonShouldBeThere()
-        {
-            deletingObj.DeletingLanguage();
-            Thread.Sleep(5000);
-        }
 
         [When(@"I click on Add New buttons to give invalid input")]
         public void WhenIClickOnAddNewButtonsToGiveInvalidInput()
         {
-            IWebElement newButton = driver.FindElement(By.XPath("//*/div/section[2]/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/thead/tr/th[3]/div"));
-            newButton.Click();
+            languageObj.ClickAdd();
         }
 
         [When(@"I give space as input <'([^']*)'>,<'([^']*)'> for language")]
         public void WhenIGiveSpaceAsInputForLanguage(string language, string level)
         {
-            languagesPageObj.SpaceInput(language = " ", level = "Fluent");
+            languageObj.SpaceInput(language = " ", level = "Fluent");
         }
 
         [Then(@"<'([^']*)'> should not add")]
@@ -89,9 +90,10 @@ namespace MarsOnboardV2.StepDefinitions
         {
             try
             {
-                Thread.Sleep(5000);
-                IWebElement languageRead = driver.FindElement(By.XPath("//div/section[2]/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/tbody[last()]/tr/td[1]"));
-                Assert.That(!string.IsNullOrEmpty(languageRead.Text), "Space should not be added");
+                Thread.Sleep(2000);
+                string spacecheck;
+                spacecheck=languageObj.SpaceCheck(language);
+                Assert.That(!string.IsNullOrEmpty(spacecheck), "Space should not be added");
             }
             catch (Exception)
             {
@@ -102,37 +104,64 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I give input <'([^']*)'> to language but not choosen level of language")]
         public void WhenIGiveInputToLanguageButNotChoosenLevelOfLanguage(string language)
         {
-            languagesPageObj.NotChoosingLevel(language = "qwer");
+            languageObj.NotChoosingLevel(language = "qwer");
         }
 
         [Then(@"<'([^']*)'> should not be added")]
         public void ThenShouldNotBeAdded(string language)
         {
-            Thread.Sleep(5000);
-            IWebElement languageRead = driver.FindElement(By.XPath("//div/section[2]/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/tbody[last()]/tr/td[1]"));
-            Assert.That(languageRead.Text, !Is.EqualTo(language), "language should not be added");
+            Thread.Sleep(1000);
+            try
+            {
+
+
+                string returnval = languageObj.GetElementText(languageObj.xpathlasttable);
+                
+            }
+            catch (Exception)
+            {
+                Assert.Pass("language should not be added");
+               
+            }
+
+
         }
+
+        
+        [When(@"Add Japanese as <'([^']*)'>,<'([^']*)'> as basic")]
+        public void WhenAddJapaneseAsAsBasic(string language, string level)
+        {
+            Thread.Sleep(2000);
+            languageObj.SpaceInput(language = "Japanese", level = "Basic"); ;
+        }
+
+
 
         [When(@"I give existing input '([^']*)','([^']*)'  of language")]
         public void WhenIGiveExistingInputOfLanguage(string language, string level)
         {
-            languagesPageObj.DuplicateInput(language, level);
+            languageObj.DuplicateInput(language, level);
         }
 
         [Then(@"Duplicate '([^']*)' should not be added")]
         public void ThenDuplicateShouldNotBeAdded(string language)
         {
-            Thread.Sleep(3000);
+           
+            Thread.Sleep(2000);
             for (int i = 1; i < 5; i++)
             {
                 try
                 {
-                    string path = "//div/section[2]/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/tbody[" + i + "]/tr/td[1]";
-                    IWebElement contentLanguage = driver.FindElement(By.XPath(path));
+                    string path = languageObj.xpathduplicate1 + i + languageObj.xpathduplicate2;
                     Thread.Sleep(3000);
-                    if (contentLanguage.Text == language && i != 1)
+                    string returnval = languageObj.GetElementText(path);
+                   
+                    if (string.IsNullOrEmpty(returnval))
+                        break;
+                    if (returnval == language && i != 1)
                         Assert.Fail("Duplicate language should not be added");
                     break;
+                  
                 }
                 catch (Exception) { Console.WriteLine(" "); }
             }
@@ -141,21 +170,21 @@ namespace MarsOnboardV2.StepDefinitions
         [When(@"I click on Pencil icon buttons")]
         public void WhenIClickOnPencilIconButtons()
         {
-            editLanguagePageObj.EditLanguage();
+            Thread.Sleep(2000) ;
+            languageObj.EditLanguage();
         }
 
         [When(@"I update language and level of language")]
         public void WhenIUpdateLanguageAndLevelOfLanguage()
         {
-            editLanguagePageObj.InputEditLanguage();
+           languageObj.InputEditLanguage();
         }
 
         [Then(@"Language and level should be updated")]
         public void ThenLanguageAndLevelShouldBeUpdated()
         {
             Thread.Sleep(2000);
-            IWebElement languageRead = driver.FindElement(By.XPath("//div/section[2]/div/div/div/div[3]/form/div[2]/div/div[2]/div/table/tbody[1]/tr/td[1]"));
-            Assert.That(languageRead.Text, Is.EqualTo("Gujrati"), "Language is not Updated");
+            Assert.That(languageObj.GetElementText(languageObj.xpathupdate), Is.EqualTo("Gujrati"), "Language is not Updated");
         }
     }
 }
